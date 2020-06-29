@@ -2,6 +2,8 @@ from tkinter import *
 
 root = Tk()
 root.geometry("500x500")
+root.minsize(width = 500, height = 500)
+root.maxsize(width = 500, height = 500)
 
 
 frame1 = Frame(root, background="lightsteelblue")
