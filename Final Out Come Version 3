@@ -1,0 +1,163 @@
+import tkinter as tk                # python 3
+from tkinter import font  as tkfont # python 3
+#import Tkinter as tk     # python 2
+#import tkFont as tkfont  # python 2
+
+
+class SampleApp(tk.Tk):
+
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+
+        self.title_font = tkfont.Font(family='Helvetica', size=20, weight="bold")
+
+        # the container is where we'll stack a bunch of frames
+        # on top of each other, then the one we want visible
+        # will be raised above the others
+        container = tk.Frame(self)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+        for F in (StartPage, PageOne, PageTwo):
+            page_name = F.__name__
+            frame = F(parent=container, controller=self)
+            self.frames[page_name] = frame
+
+            # put all of the pages in the same location;
+            # the one on the top of the stacking order
+            # will be the one that is visible.
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        self.show_frame("StartPage")
+
+    def show_frame(self, page_name):
+        '''Show a frame for the given page name'''
+        frame = self.frames[page_name]
+        frame.tkraise()
+
+
+class StartPage(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        label = tk.Label(self, text = "Main Menu", font=controller.title_font, bg='steelblue', fg='white', height=3, width=15)
+        label.pack(side="top", fill="x", pady=10)
+
+        button1 = tk.Button(self, text="Menu Planner", height=9, width=36,
+                            command=lambda: controller.show_frame("PageOne"))
+        button2 = tk.Button(self, text="Diary", height=9, width=36,
+                            command=lambda: controller.show_frame("PageTwo"))
+        button1.pack()
+        button2.pack()
+
+
+class PageOne(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        label = tk.Label(self, text="Menu Planner", font=controller.title_font, bg='steelblue', fg='white', height=3, width=15)
+        label.pack(side="top", fill="x", pady=10)
+
+        my_listbox = tk.Listbox(self)
+        my_listbox.place(anchor="center", relx=0.3, rely=0.6)
+
+        def print_me():
+            clicked_items = my_listbox2.curselection()
+            print(clicked_items)
+
+
+        my_listbox2 = tk.Listbox(self, selectmode = tk.MULTIPLE)
+        my_listbox2.insert(1, "Chicken")
+        my_listbox2.insert(2, "Sausage")
+        my_listbox2.insert(3, "Bacon")
+        my_listbox2.insert(4, "Duck")
+        my_listbox2.insert(5, "Beef")
+        my_listbox2.place(anchor="center", relx=0.7, rely=0.6)
+
+
+
+
+        def moveDown():
+            move_text = my_listbox.selection_get()
+            curindex = int(my_listbox.curselection()[0])
+            my_listbox.delete(curindex)
+            my_listbox2.insert(tk.END, move_text)
+
+        moveBtn = tk.Button(self, text=">", command=moveDown)
+        moveBtn.place(relx=0.5, rely=0.8)
+
+        def moveDown():
+            move_text = my_listbox2.selection_get()
+            curindex = int(my_listbox2.curselection()[0])
+            my_listbox2.delete(curindex)
+            my_listbox.insert(tk.END, move_text)
+
+
+
+        moveBtn2 = tk.Button(self, text="<", command=moveDown)
+        moveBtn2.place(relx=0.4, rely=0.8)
+
+
+        my_list = ["Chicken", "Beef", "Fish", "Pork", "Turkey", "Kebab", "Duck", "Bacon", "Sausages", "Eggs", "Nuts", "Yogurt", "Cheese", "Rice", "Pasta", "Apple", "Pear", "Kiwi", "Grapes", "Dragon Fruit", "Lychee", "Plum", "Mangos", "Coconuts", "Bread", "Nan Bread", "Banana", "Spinch", "Tomatoes", "Cucumbers", "Peas", "Carrots", "Taro", "Casava"]
+
+
+        for item in my_list:
+            my_listbox.insert("end", item)
+
+
+
+        Entbutton = tk.Button(self, text="Save Data", bg="steelblue", fg="white", width=10, command=print_me)
+        Entbutton.place(relx=0.3, rely=0.9)
+
+        button = tk.Button(self, text="Back to Main Menu",
+                           command=lambda: controller.show_frame("StartPage"))
+        button.pack()
+
+
+
+
+class PageTwo(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        label = tk.Label(self, text="Diary", font=controller.title_font, bg='steelblue', fg='white', height=3, width=15)
+        label.pack(side="top", fill="x", pady=10)
+
+        def clicked():
+            listbox.insert(tk.END, content.get())
+
+        def delete():
+            listbox.delete(0, tk.END)
+
+        def delete_selected():
+            listbox.delete(tk.ANCHOR)
+
+        # LISTBOX
+        content = tk.StringVar(self)
+        entry = tk.Entry(self, textvariable=content)
+        entry.pack()
+        button = tk.Button(self, text="Add Item", command=clicked)
+        button.pack()
+
+        button_delete = tk.Button(self,text="Delete", command=delete)
+        button_delete.pack()
+
+        button_delete_selected = tk.Button(self, text="Delete Selected", command=delete_selected)
+        button_delete_selected.pack()
+
+        listbox = tk.Listbox(self)
+        listbox.pack()
+
+        button = tk.Button(self, text="Back to Main menu",
+                           command=lambda: controller.show_frame("StartPage"))
+        button.pack()
+
+
+if __name__ == "__main__":
+    app = SampleApp()
+    app.mainloop()
